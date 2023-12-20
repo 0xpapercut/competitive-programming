@@ -33,6 +33,9 @@ public:
 };
 
 deque<Line> get_visible_lines_recursive(deque<Line> lines) {
+    // Recursive function to find the visible lines.
+
+    // If there's two or one line, there's nothing to do.
     if (lines.size() < 3) {
         return lines;
     }
@@ -40,6 +43,8 @@ deque<Line> get_visible_lines_recursive(deque<Line> lines) {
     deque<Line> left(lines.begin(), lines.begin() + lines.size() / 2);
     deque<Line> right(lines.begin() + lines.size() / 2, lines.end());
 
+    // Recurse on left and right, and merge.
+    // We have complexity T(n) = 2T(n/2) + O(n), which gives T(n) = O(nlog n).
     left = get_visible_lines_recursive(left);
     right = get_visible_lines_recursive(right);
     return merge_lines(left, right);
@@ -51,6 +56,10 @@ deque<Line> get_visible_lines(deque<Line> lines) {
 }
 
 deque<Line> merge_lines(deque<Line> left, deque<Line> right) {
+    // Merging works by looking at the right most line on the left side group, and comparing to the left most line on the right side group.
+    // If the intercept is in the middle of left and right intercepts, we can say that all lines are in fact visible. Otherwise, one of two lines
+    // is not visible based on the relative position of this middle intercept.
+    // The complexity in this step is at most O(n + m), where n is the size of `left` and m is the size of `right`.
     while (true) {
         pair<double, double> left_intersection;
         pair<double, double> right_intersection;
