@@ -46,13 +46,19 @@ public:
         }
     }
 
-    // O(n log n)
+    // O(n log n) (upper)
     // The fundamental idea is to construct a binary tree with the max-heap property.
     // If we start at leaves of the tree, applying heapify create a local root that respects
     // the max-heap property. As we add each new layer of the tree, we have this subtree that respects the
     // max-heap property, and when we arrive at the root, we can assert that the whole tree in fact respects
     // this property. We can't start the process on the root (i = 0) since there's no way an element at a leaf can
     // be flushed up more than one level.
+    // We can calculate a better complexity by considering the fact that heapify is of complexity O(h), and so
+    // T(n) = 1 * O(h) + 2 * O(h - 1) + ... + 2^(h-1) * O(1)
+    //      = 2^(h-1) [O(1) + O(2) / 2 + ... + O(h) / 2^(h-1)]
+    //     <= 2^(h-1) * C[1 + ... + k / 2^(k-1) + ... (continued to infinity)]
+    //     <= 2^(h-1) * 4C.
+    // which implies T(n) = O(n). We can build a max heap in linear time.
     void build() {
         for (int i = size() / 2 - 1; i >= 0; i--) {
             heapify(i);
