@@ -28,6 +28,8 @@ public:
         std::swap(*(begin + i), *(begin + j));
     }
 
+    // Running without recursing takes constant time, and it can recurse at max the height of the tree;
+    // Thus, O(log n).
     void heapify(int i) {
         int left = LEFT(i);
         int right = RIGHT(i);
@@ -44,6 +46,13 @@ public:
         }
     }
 
+    // O(n log n)
+    // The fundamental idea is to construct a binary tree with the max-heap property.
+    // If we start at leaves of the tree, applying heapify create a local root that respects
+    // the max-heap property. As we add each new layer of the tree, we have this subtree that respects the
+    // max-heap property, and when we arrive at the root, we can assert that the whole tree in fact respects
+    // this property. We can't start the process on the root (i = 0) since there's no way an element at a leaf can
+    // be flushed up more than one level.
     void build() {
         for (int i = size() / 2 - 1; i >= 0; i--) {
             heapify(i);
