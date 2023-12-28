@@ -8,13 +8,17 @@ class Matrix {
 private:
     vector<vector<T>> elem;
 public:
+    Matrix(int n) {
+        elem = vector<vector<T>>(n, vector<T>(n));
+    }
+
     Matrix(initializer_list<initializer_list<T>> list) {
         for (const auto &sub_list: list) {
             elem.push_back(vector<T>(sub_list));
         }
     }
 
-    Matrix(vector<vector<T>> elem): elem(elem) { }
+    Matrix(const vector<vector<T>>& elements) : elem(elements) { }
 
     Matrix operator+(Matrix other) {
         Matrix<T> result(elem);
@@ -47,24 +51,23 @@ public:
 
 template<typename T>
 tuple<Matrix<T>, Matrix<T>, Matrix<T>, Matrix<T>> split_matrix(Matrix<T> A) {
-    int midRow = A.size() / 2;
-    int midCol = A[0].size() / 2;
+    int n = A.size() / 2;
 
-    Matrix<T> A11(midRow, vector<T>(midCol));
-    Matrix<T> A12(midRow, vector<T>(midCol));
-    Matrix<T> A21(midRow, vector<T>(midCol));
-    Matrix<T> A22(midRow, vector<T>(midCol));
+    Matrix<T> A11(n);
+    Matrix<T> A12(n);
+    Matrix<T> A21(n);
+    Matrix<T> A22(n);
 
     for (int i = 0; i < A.size(); i++) {
         for (int j = 0; j < A[0].size(); j++) {
-            if (i < midRow && j < midCol)
+            if (i < n && j < n)
                 A11[i][j] = A[i][j];
-            else if (i < midRow && j >= midCol)
-                A12[i][j - midCol] = A[i][j];
-            else if (i >= midRow && j < midCol)
-                A21[i - midRow][j] = A[i][j];
+            else if (i < n && j >= n)
+                A12[i][j - n] = A[i][j];
+            else if (i >= n && j < n)
+                A21[i - n][j] = A[i][j];
             else
-                A22[i - midRow][j - midCol] = A[i][j];
+                A22[i - n][j - n] = A[i][j];
         }
     }
 
@@ -74,7 +77,7 @@ tuple<Matrix<T>, Matrix<T>, Matrix<T>, Matrix<T>> split_matrix(Matrix<T> A) {
 template<typename T>
 Matrix<T> join_matrix(Matrix<T> A11, Matrix<T> A12, Matrix<T> A21, Matrix<T> A22) {
     int n = A11.size();
-    Matrix<T> A(n * 2, vector<T>(n * 2));
+    Matrix<T> A(2 * n);
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -89,37 +92,9 @@ Matrix<T> join_matrix(Matrix<T> A11, Matrix<T> A12, Matrix<T> A21, Matrix<T> A22
 }
 
 template<typename T>
-Matrix<T> matadd(Matrix<T> A, Matrix<T> B) {
-    int n = A.size();
-    Matrix<T> C(n, vector<T>(n));
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j] + B[i][j];
-        }
-    }
-
-    return C;
-}
-
-template<typename T>
-Matrix<T> matsub(Matrix<T> A, Matrix<T> B) {
-    int n = A.size();
-    Matrix<T> C(n, vector<T>(n));
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j] - B[i][j];
-        }
-    }
-
-    return C;
-}
-
-template<typename T>
 Matrix<T> matmul(Matrix<T> A, Matrix<T> B) {
     if (A[0].size() == 1) {
-        return Matrix<T>({{A[0][0] * B[0][0]}});
+        return Matrix<T> {{A[0][0] * B[0][0]}};
     }
 
     auto [A11, A12, A21, A22] = split_matrix(A);
@@ -163,9 +138,8 @@ void print_matrix(Matrix<T> matrix) {
 }
 
 int main() {
-    Matrix<int> A = {{1}};
-    Matrix<int> B = {{2}};
-
+    Matrix<int> A = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
+    Matrix<int> B = {{16, 15, 14, 13}, {12, 11, 10, 9}, {8, 7, 6, 5}, {4, 3, 2, 1}};
     print_matrix(matmul(A, B));
 
     return 0;
