@@ -6,7 +6,7 @@
             "type": "shell",
             "command": "clang++",
             "args": [
-                "-std=c++14",
+                "-std=c++17",
                 "${file}",
                 "-g",
                 "-o",
